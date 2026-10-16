@@ -1,0 +1,26 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "equipment",
+    "pattern": [
+        "#H#",
+        "NBN",
+        "#=#"
+    ],
+    "key": {
+        "#": "minecraft:enchanted_golden_apple",
+        "H": "minecraft:heavy_core",
+        "N": "minecraft:nether_star",
+        "B": "minecraft:book",
+        "=": "minecraft:netherite_ingot"
+    },
+    "group": "tools",
+    "result": {
+        "id": "minecraft:enchanted_book",
+        "count": 1,
+        "components": {
+            "minecraft:stored_enchantments": {
+                "tools:excavation": 1
+            }
+        }
+    }
+}

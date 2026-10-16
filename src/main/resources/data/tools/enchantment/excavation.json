@@ -1,0 +1,27 @@
+{
+    "anvil_cost": 5,
+    "description": {
+        "translate": "enchantment.tools.excavation"
+    },
+    "max_cost": {
+        "base": 1,
+        "per_level_above_first": 15
+    },
+    "max_level": 3,
+    "min_cost": {
+        "base": 1,
+        "per_level_above_first": 10
+    },
+    "slots": [
+        "hand"
+    ],
+    "supported_items": [
+        "minecraft:wooden_pickaxe",
+        "minecraft:stone_pickaxe",
+        "minecraft:iron_pickaxe",
+        "minecraft:golden_pickaxe",
+        "minecraft:diamond_pickaxe",
+        "minecraft:netherite_pickaxe"
+    ],
+    "weight": 10
+}
