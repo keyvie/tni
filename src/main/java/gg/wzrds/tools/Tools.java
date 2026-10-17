@@ -17,6 +17,7 @@ public class Tools implements ModInitializer {
 		LOGGER.info("Loading {}", MOD_ID);
 		Commands.init();
 		CustomEnchantments.init();
+		MobPortalDespawn.init();
 		LOGGER.info("Loaded {}", MOD_ID);
 	}
 
