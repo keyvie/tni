@@ -1,6 +1,5 @@
 package gg.wzrds.tools;
 
-import gg.wzrds.tools.enchantments.Excavation;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.resources.Identifier;
@@ -17,7 +16,6 @@ public class Tools implements ModInitializer {
 		LOGGER.info("Loading {}", MOD_ID);
 		Commands.init();
 		CustomEnchantments.init();
-		MobPortalDespawn.init();
 		Permissions.init();
 		LOGGER.info("Loaded {}", MOD_ID);
 	}

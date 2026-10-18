@@ -1,21 +1,18 @@
 package gg.wzrds.tools.mixin;
 
-import gg.wzrds.tools.MobPortalDespawn;
 import net.minecraft.world.entity.Mob;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(Mob.class)
 public class MobMixin {
 
-    @Inject(at = @At("HEAD"), method = "checkDespawn", cancellable = true)
-    private void preventPortalDespawns(CallbackInfo ci) {
-        Mob mob = ( Mob ) ( Object ) this;
-
-        if (MobPortalDespawn.isImmune(mob)) {
-            ci.cancel();
-        }
+    @ModifyArg(method = "checkDespawn", at = @At(
+        value = "INVOKE",
+        target = "Lnet/minecraft/world/level/Level;getNearestPlayer(Lnet/minecraft/world/entity/Mob;D)Lnet/minecraft/world/entity/player/Player;"
+    ), index = 1)
+    private double preventPortalDespawns(double maxDist) {
+        return 25.0 * 16.0;
     }
 }
