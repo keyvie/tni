@@ -10,7 +10,7 @@ public class MobMixin {
 
     @ModifyArg(method = "checkDespawn", at = @At(
         value = "INVOKE",
-        target = "Lnet/minecraft/world/level/Level;getNearestPlayer(Lnet/minecraft/world/entity/Mob;D)Lnet/minecraft/world/entity/player/Player;"
+        target = "Lnet/minecraft/world/level/Level;getNearestPlayer(Lnet/minecraft/world/entity/Entity;D)Lnet/minecraft/world/entity/player/Player;"
     ), index = 1)
     private double preventPortalDespawns(double maxDist) {
         return 25.0 * 16.0;
