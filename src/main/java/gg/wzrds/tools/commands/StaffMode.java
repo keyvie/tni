@@ -6,12 +6,17 @@ import gg.wzrds.tools.data.StaffModeData.Position;
 import gg.wzrds.tools.data.StaffModeData;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.resources.Identifier;
 
 import java.util.Set;
 import java.util.UUID;
@@ -19,7 +24,7 @@ import java.util.UUID;
 public final class StaffMode {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("staffmode")
+        dispatcher.register(Commands.literal("staff-mode")
             .requires(source -> {
                 if (!(source.getEntity() instanceof ServerPlayer player)) {
                     return false;
@@ -60,6 +65,7 @@ public final class StaffMode {
 
         if (position == null) {
             position = new Position(
+                serverPlayer.level().dimension().identifier().toString(),
                 serverPlayer.getX(),
                 serverPlayer.getY(),
                 serverPlayer.getZ(),
@@ -73,8 +79,16 @@ public final class StaffMode {
         }
 
         staffModeData.deletePosition(uuid);
+        ResourceKey<Level> dimension = ResourceKey.create(
+                Registries.DIMENSION,
+                Identifier.parse(position.dimension())
+        );
+        ServerLevel level = server.getLevel(dimension);
+        if (level == null) {
+            level = serverPlayer.level();
+        }
         serverPlayer.teleportTo(
-            serverPlayer.level(),
+            level,
             position.x(),
             position.y(),
             position.z(),

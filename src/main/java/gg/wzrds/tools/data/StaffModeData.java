@@ -13,11 +13,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class StaffModeData extends SavedData {
-    public record Position(double x, double y, double z, float yaw, float pitch) {}
+    public record Position(String dimension ,double x, double y, double z, float yaw, float pitch) {}
     private final Map<UUID, Position> positions = new HashMap<>();
 
     private static final Codec<Position> CODEC_POSITION = RecordCodecBuilder.create(instance -> {
         return instance.group(
+            Codec.STRING.fieldOf("dimension").forGetter(Position::dimension),
             Codec.DOUBLE.fieldOf("x").forGetter(Position::x),
             Codec.DOUBLE.fieldOf("y").forGetter(Position::y),
             Codec.DOUBLE.fieldOf("z").forGetter(Position::z),
