@@ -1,21 +1,20 @@
 package gg.wzrds.tools.commands;
 
+import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.minecraft.commands.Commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import gg.wzrds.tools.data.StaffModeData.Position;
 import gg.wzrds.tools.data.StaffModeData;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.resources.Identifier;
 
 import java.util.Set;
@@ -25,30 +24,13 @@ public final class StaffMode {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("staff-mode")
-            .requires(source -> {
-                if (!(source.getEntity() instanceof ServerPlayer player)) {
-                    return false;
-                }
-
-                if (source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
-                    return true;
-                }
-
-                PlayerTeam team = player.getTeam();
-                if (team == null) {
-                    return false;
-                }
-
-                String teamName = team.getName();
-                String[] allowedTeams = {"admin", "mod"};
-                for (String allowedTeam : allowedTeams) {
-                    if (teamName.equalsIgnoreCase(allowedTeam)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            }).executes(StaffMode::execute)
+            .requires(source ->
+                Permissions.check(
+                    source,
+                    "tools.commands.staff-mode",
+                    false
+                )
+            ).executes(StaffMode::execute)
         );
     }
 
