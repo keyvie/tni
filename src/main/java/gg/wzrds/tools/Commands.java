@@ -1,5 +1,6 @@
 package gg.wzrds.tools;
 
+import gg.wzrds.tools.commands.Items;
 import gg.wzrds.tools.commands.StaffMode;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
@@ -12,6 +13,7 @@ public final class Commands {
             environment
         ) -> {
             StaffMode.register(dispatcher);
+            Items.register(dispatcher);
         });
     }
 }

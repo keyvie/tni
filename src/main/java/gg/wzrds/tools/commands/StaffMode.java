@@ -27,7 +27,7 @@ public final class StaffMode {
             .requires(source ->
                 Permissions.check(
                     source,
-                    "tools.commands.staff-mode",
+                    "wzrds.tools.staff-mode",
                     false
                 )
             ).executes(StaffMode::execute)
