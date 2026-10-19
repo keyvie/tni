@@ -1,5 +1,8 @@
 package gg.wzrds.tools;
 
+import gg.wzrds.tools.commands.Commands;
+import gg.wzrds.tools.enchantments.Excavation;
+import gg.wzrds.tools.enchantments.Swiftness;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.resources.Identifier;
@@ -14,9 +17,16 @@ public class Tools implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Loading {}", MOD_ID);
-		Commands.init();
-		CustomEnchantments.init();
+		// Override the permission handler
 		Permissions.init();
+
+		// Loads all commands
+		Commands.register();
+
+		// Enchantments
+		Excavation.register();
+		Swiftness.register();
+
 		LOGGER.info("Loaded {}", MOD_ID);
 	}
 

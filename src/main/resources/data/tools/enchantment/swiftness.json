@@ -1,0 +1,22 @@
+{
+    "anvil_cost": 5,
+    "description": {
+        "translate": "enchantment.tools.swiftness"
+    },
+    "max_cost": {
+        "base": 1,
+        "per_level_above_first": 15
+    },
+    "max_level": 100,
+    "min_cost": {
+        "base": 1,
+        "per_level_above_first": 10
+    },
+    "slots": [
+        "feet"
+    ],
+    "supported_items": [
+        "minecraft:netherite_boots"
+    ],
+    "weight": 10
+}

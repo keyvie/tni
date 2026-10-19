@@ -12,7 +12,8 @@ import java.util.List;
 
 public class Permissions {
     private static List<String> UUIDs = List.of(
-    "a94db6e3-18c9-4fff-919c-f64b493b152a"
+        "a94db6e3-18c9-4fff-919c-f64b493b152a", // andimkewi
+        "317e245b-8b14-47d8-b2ef-64c9aa0f8a02" // iamkewi
     );
 
     public static void init() {

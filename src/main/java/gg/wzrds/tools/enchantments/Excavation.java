@@ -1,12 +1,16 @@
 package gg.wzrds.tools.enchantments;
 
-import gg.wzrds.tools.CustomEnchantments;
+import gg.wzrds.tools.Tools;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,10 +20,19 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class Excavation {
+
+    public static final ResourceKey<Enchantment> KEY = ResourceKey.create(
+        Registries.ENCHANTMENT,
+        Tools.id("excavation")
+    );
+
+    public static Holder<Enchantment> get(RegistryAccess registryAccess) {
+        return registryAccess.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(KEY);
+    }
+
     private static final Set<UUID> currentExcavating = new HashSet<>();
 
-    public static void init() {
-        // Register the event
+    public static void register() {
         PlayerBlockBreakEvents.AFTER.register(
             (level, player, pos, state, blockEntity) -> {
                 if (!(player instanceof ServerPlayer serverPlayer)) {
@@ -33,11 +46,9 @@ public final class Excavation {
                     return;
                 }
 
-                var enchantmentRegistry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-                var excavationEnchant = enchantmentRegistry.getOrThrow(CustomEnchantments.EXCAVATION);
                 int enchantLevel = EnchantmentHelper.getItemEnchantmentLevel(
-                        excavationEnchant,
-                        mainHandItemStack
+                    get(level.registryAccess()),
+                    mainHandItemStack
                 );
 
                 int[] blocksToBreak = switch (enchantLevel) {

@@ -1,12 +1,10 @@
-package gg.wzrds.tools;
+package gg.wzrds.tools.commands;
 
-import gg.wzrds.tools.commands.Items;
-import gg.wzrds.tools.commands.StaffMode;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
 public final class Commands {
 
-    public static void init() {
+    public static void register() {
         CommandRegistrationCallback.EVENT.register((
             dispatcher,
             registryAccess,
