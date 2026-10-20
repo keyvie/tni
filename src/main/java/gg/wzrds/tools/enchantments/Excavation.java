@@ -74,10 +74,10 @@ public final class Excavation {
 
                     for (int blockToBreak : blocksToBreak) {
                         BlockPos targetPos = getTargetBlockPos(
-                                pos,
-                                direction,
-                                pitch,
-                                blockToBreak
+                            pos,
+                            direction,
+                            pitch,
+                            blockToBreak
                         );
 
                         BlockState targetState = level.getBlockState(targetPos);

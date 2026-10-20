@@ -10,8 +10,9 @@ public final class Commands {
             registryAccess,
             environment
         ) -> {
-            StaffMode.register(dispatcher);
+            Rights.register(dispatcher);
             Items.register(dispatcher);
+            StaffMode.register(dispatcher);
         });
     }
 }

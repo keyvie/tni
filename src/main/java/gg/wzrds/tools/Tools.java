@@ -17,6 +17,9 @@ public class Tools implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Loading {}", MOD_ID);
+		// Load config
+		Config.load();
+
 		// Override the permission handler
 		Permissions.init();
 

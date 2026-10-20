@@ -1,12 +1,11 @@
 package gg.wzrds.tools.items;
 
+import gg.wzrds.tools.Config;
 import gg.wzrds.tools.enchantments.Swiftness;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -24,7 +23,7 @@ public class Ascendant {
 
     public static ResourceKey<EquipmentAsset> ASCENDANT_BOOTS = ResourceKey.create(
         EquipmentAssets.ROOT_ID,
-        Identifier.fromNamespaceAndPath("wzrds", "ascendant")
+        Identifier.fromNamespaceAndPath(Config.settings.resource_pack_namespace, "ascendant")
     );
 
     public static ItemStack createBoots(ServerLevel level) {
@@ -42,6 +41,7 @@ public class Ascendant {
                 .setAsset(ASCENDANT_BOOTS)
                 .build()
         );
+        stack.set(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath("wzrds", "ascendant_boots"));
         stack.set(
             DataComponents.UNBREAKABLE,
             Unit.INSTANCE

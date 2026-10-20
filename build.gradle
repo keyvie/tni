@@ -38,8 +38,9 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	// Permissions API
+	// Config & Permissions API
 	include(implementation("me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"))
+	include(implementation("org.yaml:snakeyaml:${project.snakeyaml_version}"))
 }
 
 processResources {
