@@ -1,6 +1,6 @@
 package gg.wzrds.tools.items;
 
-import gg.wzrds.tools.Config;
+import gg.wzrds.tools.config.Config;
 import gg.wzrds.tools.enchantments.Swiftness;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
@@ -23,7 +23,7 @@ public class Ascendant {
 
     public static ResourceKey<EquipmentAsset> ASCENDANT_BOOTS = ResourceKey.create(
         EquipmentAssets.ROOT_ID,
-        Identifier.fromNamespaceAndPath(Config.settings.resource_pack_namespace, "ascendant")
+        Identifier.fromNamespaceAndPath(Config.get().resource_pack_namespace, "ascendant")
     );
 
     public static ItemStack createBoots(ServerLevel level) {

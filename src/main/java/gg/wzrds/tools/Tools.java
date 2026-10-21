@@ -1,6 +1,7 @@
 package gg.wzrds.tools;
 
-import gg.wzrds.tools.commands.Commands;
+import gg.wzrds.tools.commands.CommandManager;
+import gg.wzrds.tools.config.Config;
 import gg.wzrds.tools.enchantments.Excavation;
 import gg.wzrds.tools.enchantments.Swiftness;
 import net.fabricmc.api.ModInitializer;
@@ -23,7 +24,7 @@ public class Tools implements ModInitializer {
 		Permissions.register();
 
 		// Loads all commands
-		Commands.register();
+		CommandManager.register();
 
 		// Enchantments
 		Excavation.register();
