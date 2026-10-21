@@ -20,7 +20,7 @@ import net.minecraft.resources.Identifier;
 import java.util.Set;
 import java.util.UUID;
 
-public final class StaffMode {
+public final class StaffModeCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("staff-mode")
@@ -30,7 +30,7 @@ public final class StaffMode {
                     "wzrds.tools.staff-mode",
                     false
                 )
-            ).executes(StaffMode::execute)
+            ).executes(StaffModeCommand::execute)
         );
     }
 

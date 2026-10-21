@@ -11,7 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Prediction;
 import net.minecraft.world.item.ItemStack;
 
-public final class Items {
+public final class ItemsCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
@@ -19,16 +19,11 @@ public final class Items {
             .requires(source ->
                 Permissions.check(source, "wzrds.tools.items", false)
             )
-            .executes(Items::execute)
             .then(
                 Commands.literal("spawn")
-                .executes(Items::executeSpawn)
+                .executes(ItemsCommand::executeSpawn)
             )
         );
-    }
-
-    public static int execute(CommandContext<CommandSourceStack> context) {
-        return 1;
     }
 
     public static int executeSpawn(CommandContext<CommandSourceStack> context) {

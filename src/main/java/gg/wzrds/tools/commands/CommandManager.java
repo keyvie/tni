@@ -22,8 +22,8 @@ public final class CommandManager {
             environment
         ) -> {
             ConfigCommand.register(dispatcher);
-            Items.register(dispatcher);
-            StaffMode.register(dispatcher);
+            ItemsCommand.register(dispatcher);
+            StaffModeCommand.register(dispatcher);
         });
     }
 }
