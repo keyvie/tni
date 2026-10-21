@@ -121,7 +121,7 @@ public class ConfigCommand {
         Config.load();
         CommandManager.respondWithStringSuccess(
             context,
-            "Reloaded Config for " + Tools.MOD_ID,
+            "Reloaded config for " + Tools.MOD_ID,
             false
         );
         return 1;
