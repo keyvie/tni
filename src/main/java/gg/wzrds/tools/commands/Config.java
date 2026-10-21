@@ -6,13 +6,13 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 
-public class Rights {
+public class Config {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
-            Commands.literal("rights")
+            Commands.literal("config")
                 .requires(source ->
-                        Permissions.check(source, "wzrds.tools.rights", false)
+                        Permissions.check(source, "wzrds.tools.config", false)
                 )
                 .executes(gg.wzrds.tools.commands.Items::execute)
         );
