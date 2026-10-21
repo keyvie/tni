@@ -16,12 +16,11 @@ public class Tools implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading {}", MOD_ID);
-		// Load config
+		// Load da config
 		Config.load();
 
-		// Override the permission handler
-		Permissions.init();
+		// Setup for the permission system
+		Permissions.register();
 
 		// Loads all commands
 		Commands.register();
@@ -29,8 +28,6 @@ public class Tools implements ModInitializer {
 		// Enchantments
 		Excavation.register();
 		Swiftness.register();
-
-		LOGGER.info("Loaded {}", MOD_ID);
 	}
 
 	public static Identifier id(String path) {

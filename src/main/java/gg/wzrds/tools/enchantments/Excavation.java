@@ -51,11 +51,28 @@ public final class Excavation {
                     mainHandItemStack
                 );
 
-                int[] blocksToBreak = switch (enchantLevel) {
-                    case 1 -> new int[] {4, 6};
-                    case 2 -> new int[] {2, 4, 6, 8};
-                    case 3 -> new int[] {1, 2, 3, 4, 6, 7, 8, 9};
-                    default -> new int[] {};
+                int[][] blocksToBreak = switch (enchantLevel) {
+                    case 1 -> new int[][] {
+                            {-1, 0},
+                            {1, 0}
+                    };
+                    case 2 -> new int[][] {
+                            {0, 1},
+                            {-1, 0},
+                            {1, 0},
+                            {0, -1}
+                    };
+                    case 3 -> new int[][] {
+                            {-1, 1},
+                            {0, 1},
+                            {1, 1},
+                            {-1, 0},
+                            {1, 0},
+                            {-1, -1},
+                            {0, -1},
+                            {1, -1}
+                    };
+                    default -> new int[][] {};
                 };
 
                 if (blocksToBreak.length == 0) {
@@ -71,18 +88,17 @@ public final class Excavation {
                 try {
                     Direction direction = player.getDirection();
                     float pitch = serverPlayer.getXRot();
+                    boolean plane = pitch > 45 || pitch < -45;
 
-                    for (int blockToBreak : blocksToBreak) {
+                    for (int[] target : blocksToBreak) {
                         BlockPos targetPos = getTargetBlockPos(
                             pos,
                             direction,
-                            pitch,
-                            blockToBreak
+                            target,
+                            plane
                         );
 
-                        BlockState targetState = level.getBlockState(targetPos);
-                        Block targetBlock = targetState.getBlock();
-
+                        Block targetBlock = level.getBlockState(targetPos).getBlock();
                         if (targetBlock != originalBlock) {
                             continue;
                         }
@@ -97,31 +113,52 @@ public final class Excavation {
     }
 
     private static BlockPos getTargetBlockPos(
-            BlockPos originalBlockPos,
+            BlockPos originalPos,
             Direction direction,
-            float pitch,
-            int blockNumber
+            int[] target,
+            boolean plane
     ) {
-        int offset = (blockNumber - 1) % 3 - 1;
-        int yOffset = 1 - (blockNumber - 1) / 3;
+        int horizontal = target[0];
+        int vertical = target[1];
+        int x = 0;
+        int y = 0;
+        int z = 0;
 
-        if (pitch < -45.0f || pitch > 45.0f) {
-            return switch (direction) {
-                case NORTH -> originalBlockPos.offset(offset, 0, yOffset);
-                case SOUTH -> originalBlockPos.offset(-offset, 0, -yOffset);
-                case EAST -> originalBlockPos.offset(-yOffset, 0, offset);
-                case WEST -> originalBlockPos.offset(yOffset, 0, -offset);
-                default -> originalBlockPos;
-            };
+        switch (direction) {
+            case NORTH -> {
+                x = -horizontal;
+                if (plane) {
+                    z = -vertical;
+                } else {
+                    y = vertical;
+                }
+            }
+            case SOUTH -> {
+                x = horizontal;
+                if (plane) {
+                    z = vertical;
+                } else {
+                    y = vertical;
+                }
+            }
+            case EAST -> {
+                z = horizontal;
+                if (plane) {
+                    x = vertical;
+                } else {
+                    y = vertical;
+                }
+            }
+            case WEST -> {
+                z = -horizontal;
+                if (plane) {
+                    x = -vertical;
+                } else {
+                    y = vertical;
+                }
+            }
         }
 
-        // Looking straight ahead.
-        return switch (direction) {
-            case NORTH -> originalBlockPos.offset(-offset, yOffset, 0);
-            case SOUTH -> originalBlockPos.offset(offset, yOffset, 0);
-            case EAST -> originalBlockPos.offset(0, yOffset, offset);
-            case WEST -> originalBlockPos.offset(0, yOffset, -offset);
-            default -> originalBlockPos;
-        };
+        return originalPos.offset(x, y, z);
     }
 }

@@ -5,29 +5,42 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 
-import java.util.List;
-
 public class Permissions {
-    private static List<String> UUIDs = List.of(
-        "a94db6e3-18c9-4fff-919c-f64b493b152a", // andimkewi
-        "317e245b-8b14-47d8-b2ef-64c9aa0f8a02" // iamkewi
-    );
+    public static boolean hasOpLevel(ServerPlayer serverPlayer, PermissionLevel permissionLevel) {
+        Permission permission = new Permission.HasCommandLevel(permissionLevel);
+        return serverPlayer.permissions().hasPermission(permission);
+    }
 
-    public static void init() {
+    public static String[] splitNodes(String input) {
+        return input.trim().split(" ");
+    }
+
+    public static boolean hasAccess(ServerPlayer serverPlayer, String[] nodes) {
+        return false;
+    }
+
+    public static void register() {
         PermissionCheckEvent.EVENT.register(
             (source, permission) -> {
                 if (!(source instanceof CommandSourceStack commandSource)) {
                     return TriState.DEFAULT;
                 }
                 ServerPlayer serverPlayer = commandSource.getPlayer();
-                if  (serverPlayer == null) {
+                if (serverPlayer == null) {
                     return TriState.DEFAULT;
                 }
-                String uuid = serverPlayer.getUUID().toString();
-                if (UUIDs.contains(uuid)) {
+                if (hasOpLevel(serverPlayer, PermissionLevel.OWNERS)) {
+                    return TriState.TRUE;
+                }
+                if (hasOpLevel(serverPlayer, PermissionLevel.ALL)) {
+                    return TriState.DEFAULT;
+                }
+                if (hasAccess(serverPlayer, splitNodes(permission))) {
                     return TriState.TRUE;
                 }
                 return TriState.FALSE;
@@ -42,17 +55,6 @@ public class Permissions {
                 boolean notUsingThisYet = joinTeam(player, "regular");
             }
         );
-    }
-
-    public static String[] splitNodes(String input) {
-        return input.trim().split(" ");
-    }
-
-    public static boolean hasAccess(ServerPlayer serverPlayer, String[] args) {
-        if (UUIDs.contains(serverPlayer.getStringUUID())) {
-            return true;
-        }
-        return false;
     }
 
     public static boolean joinTeam(ServerPlayer player, String teamName) {
