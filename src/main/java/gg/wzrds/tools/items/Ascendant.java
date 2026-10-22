@@ -41,7 +41,7 @@ public class Ascendant {
                 .setAsset(ASCENDANT_BOOTS)
                 .build()
         );
-        stack.set(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath("wzrds", "ascendant_boots"));
+        stack.set(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath(Config.get().resource_pack_namespace, "ascendant_boots"));
         stack.set(
             DataComponents.UNBREAKABLE,
             Unit.INSTANCE
