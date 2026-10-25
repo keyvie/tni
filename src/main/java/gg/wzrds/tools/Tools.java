@@ -7,6 +7,7 @@ import gg.wzrds.tools.enchantments.Swiftness;
 import gg.wzrds.tools.items.Ascendant;
 import gg.wzrds.tools.items.BookOfReach;
 import gg.wzrds.tools.items.Magnet;
+import gg.wzrds.tools.recipes.BookOfReachRecipe;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.Identifier;
 
@@ -36,6 +37,9 @@ public class Tools implements ModInitializer {
 		Ascendant.register();
 		BookOfReach.register();
 		Magnet.register();
+
+		// Recipes
+		BookOfReachRecipe.register();
 	}
 
 	public static Identifier id(String path) {
