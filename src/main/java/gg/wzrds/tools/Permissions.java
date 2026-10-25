@@ -1,8 +1,7 @@
 package gg.wzrds.tools;
 
 import gg.wzrds.tools.config.Config;
-import gg.wzrds.tools.config.PermissionGroup;
-import gg.wzrds.tools.config.PermissionUser;
+import gg.wzrds.tools.config.PermissionTeam;
 import me.lucko.fabric.api.permissions.v0.PermissionCheckEvent;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.util.TriState;
@@ -12,6 +11,7 @@ import net.minecraft.server.permissions.Permission;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.Team;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,29 +53,16 @@ public class Permissions {
 
     public static Boolean hasAccess(ServerPlayer serverPlayer, String node) {
         String uuid = serverPlayer.getUUID().toString();
-        PermissionUser user = Config.get().permissions.users.get(uuid);
-        if (user != null) {
-            Boolean result = hasAccess(user.allow, user.deny, node);
-            if (result != null) {
-                return result;
-            }
+        Team team = serverPlayer.getTeam();
+        if (team == null) {
+            return null;
+        }
+        PermissionTeam permissionTeam = Config.get().permissions.get(team.getName());
+        if (permissionTeam == null) {
+            return null;
         }
 
-        List<PermissionGroup> groups = new ArrayList<>();
-        for (PermissionGroup group : Config.get().permissions.groups.values()) {
-            if (group.uuids.contains(uuid)) {
-                groups.add(group);
-            }
-        }
-        groups.sort((a, b) -> Integer.compare(b.priority, a.priority));
-        for (PermissionGroup group : groups) {
-            Boolean result = hasAccess(group.allow, group.deny, node);
-            if (result != null) {
-                return result;
-            }
-        }
-
-        return null;
+        return hasAccess(permissionTeam.allow, permissionTeam.deny, node);
     }
 
     public static void register() {

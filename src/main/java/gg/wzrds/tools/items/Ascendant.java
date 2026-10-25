@@ -1,5 +1,7 @@
 package gg.wzrds.tools.items;
 
+import gg.wzrds.tools.CustomItems;
+import gg.wzrds.tools.Tools;
 import gg.wzrds.tools.config.Config;
 import gg.wzrds.tools.enchantments.Swiftness;
 import net.minecraft.core.Registry;
@@ -20,17 +22,22 @@ import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.item.equipment.Equippable;
 
 public class Ascendant {
+    public static final Identifier BOOTS_ID = Tools.id("ascendant_boots");
 
     public static ResourceKey<EquipmentAsset> ASCENDANT_BOOTS = ResourceKey.create(
         EquipmentAssets.ROOT_ID,
         Identifier.fromNamespaceAndPath(Config.get().resource_pack_namespace, "ascendant")
     );
 
+    public static void register() {
+        CustomItems.register(BOOTS_ID, Ascendant::createBoots);
+    }
+
     public static ItemStack createBoots(ServerLevel level) {
         ItemStack stack = new ItemStack(Items.NETHERITE_BOOTS);
 
         stack.set(
-            DataComponents.CUSTOM_NAME,
+            DataComponents.ITEM_NAME,
             Component.literal("Ascendant Boots")
         );
         stack.setDamageValue(0);

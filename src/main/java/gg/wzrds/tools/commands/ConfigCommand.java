@@ -3,19 +3,15 @@ package gg.wzrds.tools.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import gg.wzrds.tools.Tools;
-import gg.wzrds.tools.commands.suggestions.PermissionGroupSuggestionProvider;
 import gg.wzrds.tools.config.Config;
-import gg.wzrds.tools.config.PermissionGroup;
-import gg.wzrds.tools.config.PermissionUser;
+import gg.wzrds.tools.config.PermissionTeam;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.commands.Commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.server.players.NameAndId;
-
-import java.util.Collection;
+import net.minecraft.commands.arguments.TeamArgument;
+import net.minecraft.world.scores.PlayerTeam;
 
 public class ConfigCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -31,86 +27,40 @@ public class ConfigCommand {
             .then(Commands
                 .literal("permissions")
                 .then(Commands
-                    .literal("group")
+                    .literal("allow")
                     .then(Commands
-                        .literal("create")
+                        .argument("team", TeamArgument.team())
                         .then(Commands
-                            .argument("name", StringArgumentType.string())
-                            .executes(ConfigCommand::executePermissionsGroupCreate)
-                        )
-                    )
-                    .then(Commands
-                        .literal("delete")
-                        .then(Commands
-                            .argument("name", StringArgumentType.string())
-                            .suggests(new PermissionGroupSuggestionProvider())
-                            .executes(ConfigCommand::executePermissionsGroupDelete)
-                        )
-                    )
-                    .then(Commands
-                        .literal("allow")
-                        .then(Commands
-                            .argument("name", StringArgumentType.string())
-                            .suggests(new PermissionGroupSuggestionProvider())
-                            .then(Commands
-                                .argument("permission", StringArgumentType.greedyString())
-                                .executes(ConfigCommand::executePermissionsGroupAllow)
-                            )
-                        )
-
-                    )
-                    .then(Commands
-                        .literal("deny")
-                        .then(Commands
-                            .argument("name", StringArgumentType.string())
-                            .suggests(new PermissionGroupSuggestionProvider())
-                            .then(Commands
-                                .argument("permission", StringArgumentType.greedyString())
-                                .executes(ConfigCommand::executePermissionsGroupDeny)
-                            )
+                            .argument("permission", StringArgumentType.greedyString())
+                            .executes(ConfigCommand::executePermissionsAllow)
                         )
                     )
                 )
                 .then(Commands
-                    .literal("user")
-                    .then(Commands.argument("player", GameProfileArgument.gameProfile())
+                    .literal("deny")
+                    .then(Commands
+                        .argument("team", TeamArgument.team())
                         .then(Commands
-                            .literal("group")
-                            .then(Commands
-                                .literal("grant")
-                                .then(Commands
-                                    .argument("name", StringArgumentType.string())
-                                    .suggests(new PermissionGroupSuggestionProvider())
-                                    .executes(ConfigCommand::executePermissionsUserGroupGrant)
-                                )
-                            )
-                            .then(Commands
-                                .literal("revoke")
-                                .then(Commands
-                                    .argument("name", StringArgumentType.string())
-                                    .suggests(new PermissionGroupSuggestionProvider())
-                                    .executes(ConfigCommand::executePermissionsUserGroupRevoke)
-                                )
-                            )
+                            .argument("permission", StringArgumentType.greedyString())
+                            .executes(ConfigCommand::executePermissionsDeny)
                         )
+                    )
+                )
+                .then(Commands
+                    .literal("remove")
+                    .then(Commands
+                        .argument("team", TeamArgument.team())
                         .then(Commands
-                            .literal("allow")
-                            .then(Commands
-                                .argument("permission", StringArgumentType.greedyString())
-                                .executes(ConfigCommand::executePermissionsUserAllow)
-                            )
+                            .argument("permission", StringArgumentType.greedyString())
+                            .executes(ConfigCommand::executePermissionsRemove)
                         )
-                        .then(Commands
-                            .literal("deny")
-                            .then(Commands
-                                .argument("permission", StringArgumentType.greedyString())
-                                .executes(ConfigCommand::executePermissionsUserDeny)
-                            )
-                        )
-                        .then(Commands
-                            .literal("remove")
-                            .executes(ConfigCommand::executePermissionsUserRemove)
-                        )
+                    )
+                )
+                .then(Commands
+                    .literal("delete")
+                    .then(Commands
+                        .argument("team", TeamArgument.team())
+                        .executes(ConfigCommand::executePermissionsDelete)
                     )
                 )
             )
@@ -127,269 +77,83 @@ public class ConfigCommand {
         return 1;
     }
 
-    public static int executePermissionsGroupCreate(CommandContext<CommandSourceStack> context) {
-        String name = StringArgumentType.getString(context, "name");
-        PermissionGroup group = Config.get().permissions.groups.get(name);
-        if (group != null) {
-            CommandManager.respondWithStringFailure(context, "A group with that name already exists");
+    public static int executePermissionsAllow(CommandContext<CommandSourceStack> context) {
+        PlayerTeam team;
+        try {
+            team = TeamArgument.getTeam(context, "team");
+        }  catch (CommandSyntaxException e) {
+            CommandManager.respondWithStringFailure(context, e.getMessage());
             return 0;
         }
-        Config.get().permissions.groups.put(name, new PermissionGroup());
-        Config.save();
-        CommandManager.respondWithStringSuccess(context, String.format("Created '%s' group", name), false);
-        return 1;
-    }
-
-    public static int executePermissionsGroupDelete(CommandContext<CommandSourceStack> context) {
-        String name = StringArgumentType.getString(context, "name");
-        PermissionGroup group = Config.get().permissions.groups.get(name);
-        if (group == null) {
-            CommandManager.respondWithStringFailure(context, "That group doesnt exist");
-            return 0;
-        }
-        Config.get().permissions.groups.remove(name);
-        Config.save();
-        CommandManager.respondWithStringSuccess(context, String.format("Deleted '%s' group", name), false);
-        return 1;
-    }
-
-
-    public static int executePermissionsGroupAllow(CommandContext<CommandSourceStack> context) {
-        String name = StringArgumentType.getString(context, "name");
+        PermissionTeam permissionTeam = Config.get().permissions.computeIfAbsent(team.getName(), _ -> new PermissionTeam());
         String permission = StringArgumentType.getString(context, "permission");
-        PermissionGroup group = Config.get().permissions.groups.get(name);
-        if (group == null) {
-            CommandManager.respondWithStringFailure(context, "No group with that name exists");
-            return 0;
-        }
-        if (group.allow.contains(permission)) {
-            group.allow.remove(permission);
-            CommandManager.respondWithStringSuccess(context, String.format("Removed '%s' from '%s' group's allow list", permission, name), false);
+        if (permissionTeam.allow.contains(permission)) {
+            permissionTeam.allow.remove(permission);
+            CommandManager.respondWithStringSuccess(context, String.format("Removed %s from %s teams's allowed overrides", permission, team.getName()), false);
         } else {
-            group.allow.add(permission);
-            CommandManager.respondWithStringSuccess(context, String.format("Added '%s' to '%s' group's allow list", permission, name), false);
+            permissionTeam.allow.add(permission);
+            CommandManager.respondWithStringSuccess(context, String.format("Added %s to %s teams's allowed overrides", permission, team.getName()), false);
         }
-        group.deny.remove(permission);
+        permissionTeam.deny.remove(permission);
         Config.save();
         return 1;
     }
 
-    public static int executePermissionsGroupDeny(CommandContext<CommandSourceStack> context) {
-        String name = StringArgumentType.getString(context, "name");
+    public static int executePermissionsDeny(CommandContext<CommandSourceStack> context) {
+        PlayerTeam team;
+        try {
+            team = TeamArgument.getTeam(context, "team");
+        }  catch (CommandSyntaxException e) {
+            CommandManager.respondWithStringFailure(context, e.getMessage());
+            return 0;
+        }
+        PermissionTeam permissionTeam = Config.get().permissions.computeIfAbsent(team.getName(), _ -> new PermissionTeam());
         String permission = StringArgumentType.getString(context, "permission");
-        PermissionGroup group = Config.get().permissions.groups.get(name);
-        if (group == null) {
-            CommandManager.respondWithStringFailure(context, "No group with that name exists");
-            return 0;
-        }
-        if (group.deny.contains(permission)) {
-            group.deny.remove(permission);
-            CommandManager.respondWithStringSuccess(context, String.format("Removed '%s' from '%s' group's deny list", permission, name), false);
+        if (permissionTeam.deny.contains(permission)) {
+            permissionTeam.deny.remove(permission);
+            CommandManager.respondWithStringSuccess(context, String.format("Removed %s from %s teams's denied overrides", permission, team.getName()), false);
         } else {
-            group.deny.add(permission);
-            CommandManager.respondWithStringSuccess(context, String.format("Added '%s' to '%s' group's deny list", permission, name), false);
+            permissionTeam.deny.add(permission);
+            CommandManager.respondWithStringSuccess(context, String.format("Added %s to %s teams's denied overrides", permission, team.getName()), false);
         }
-        group.allow.remove(permission);
+        permissionTeam.allow.remove(permission);
         Config.save();
         return 1;
     }
 
-    // User
-
-    public static int executePermissionsUserGroupGrant(CommandContext<CommandSourceStack> context) {
-        NameAndId profile;
+    public static int executePermissionsRemove(CommandContext<CommandSourceStack> context) {
+        PlayerTeam team;
         try {
-            Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "player");
-            if (profiles.size() != 1) {
-                CommandManager.respondWithStringFailure(context, "This argument only supports one player");
-                return 0;
-            }
-            profile = profiles.iterator().next();
-        } catch (CommandSyntaxException e) {
+            team = TeamArgument.getTeam(context, "team");
+        }  catch (CommandSyntaxException e) {
             CommandManager.respondWithStringFailure(context, e.getMessage());
             return 0;
         }
-
-        String name = StringArgumentType.getString(context, "name");
-        PermissionGroup group = Config.get().permissions.groups.get(name);
-        if (group == null) {
-            CommandManager.respondWithStringFailure(context, "No group with that name exists");
-            return 0;
-        }
-        String uuid = profile.id().toString();
-        if (group.uuids.contains(uuid)) {
-            CommandManager.respondWithStringFailure(
-                context,
-                String.format("%s is already in %s group", profile.name(), name)
-            );
-            return 0;
-        }
-
-        group.uuids.add(uuid);
-        CommandManager.respondWithStringSuccess(
-            context,
-            String.format("%s has been granted %s group", profile.name(), name),
-            false
-        );
-        Config.save();
-        return 1;
-    }
-
-    public static int executePermissionsUserGroupRevoke(CommandContext<CommandSourceStack> context) {
-        NameAndId profile;
-        try {
-            Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "player");
-            if (profiles.size() != 1) {
-                CommandManager.respondWithStringFailure(context, "This argument only supports one player");
-                return 0;
-            }
-            profile = profiles.iterator().next();
-        } catch (CommandSyntaxException e) {
-            CommandManager.respondWithStringFailure(context, e.getMessage());
-            return 0;
-        }
-
-        String name = StringArgumentType.getString(context, "name");
-        PermissionGroup group = Config.get().permissions.groups.get(name);
-        if (group == null) {
-            CommandManager.respondWithStringFailure(context, "No group with that name exists");
-            return 0;
-        }
-        String uuid = profile.id().toString();
-        if (!group.uuids.contains(uuid)) {
-            CommandManager.respondWithStringFailure(
-                context,
-                String.format("%s is not in %s group", profile.name(), name)
-            );
-            return 0;
-        }
-
-        group.uuids.remove(uuid);
-        CommandManager.respondWithStringSuccess(
-            context,
-            String.format("%s has been revoked from %s group", profile.name(), name),
-            false
-        );
-        Config.save();
-        return 1;
-    }
-
-    public static int executePermissionsUserAllow(CommandContext<CommandSourceStack> context) {
-        NameAndId profile;
-        try {
-            Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "player");
-            if (profiles.size() != 1) {
-                CommandManager.respondWithStringFailure(context, "This argument only supports one player");
-                return 0;
-            }
-            profile = profiles.iterator().next();
-        } catch (CommandSyntaxException e) {
-            CommandManager.respondWithStringFailure(context, e.getMessage());
-            return 0;
-        }
-        String uuid =  profile.id().toString();
-
+        PermissionTeam permissionTeam = Config.get().permissions.computeIfAbsent(team.getName(), _ -> new PermissionTeam());
         String permission = StringArgumentType.getString(context, "permission");
-        PermissionUser user = Config.get().permissions.users.computeIfAbsent(uuid, key -> new PermissionUser());
-        user.deny.remove(permission);
-        if (user.allow.contains(permission)) {
-            user.allow.remove(permission);
-            CommandManager.respondWithStringSuccess(
-                context,
-                String.format("Unallowed %s from %s", permission, profile.name()),
-                false
-            );
-        } else {
-            user.allow.add(permission);
-            CommandManager.respondWithStringSuccess(
-                context,
-                String.format("Allowed %s for %s", permission, profile.name()),
-                false
-            );
-        }
+        permissionTeam.allow.remove(permission);
+        permissionTeam.deny.remove(permission);
+        CommandManager.respondWithStringSuccess(context, String.format("Removed %s from %s teams's overrides", permission, team.getName()), false);
         Config.save();
         return 1;
     }
 
-    public static int executePermissionsUserDeny(CommandContext<CommandSourceStack> context) {
-        NameAndId profile;
+    public static int executePermissionsDelete(CommandContext<CommandSourceStack> context) {
+        PlayerTeam team;
         try {
-            Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "player");
-            if (profiles.size() != 1) {
-                CommandManager.respondWithStringFailure(context, "This argument only supports one player");
-                return 0;
-            }
-            profile = profiles.iterator().next();
-        } catch (CommandSyntaxException e) {
+            team = TeamArgument.getTeam(context, "team");
+        }  catch (CommandSyntaxException e) {
             CommandManager.respondWithStringFailure(context, e.getMessage());
             return 0;
         }
-        String uuid =  profile.id().toString();
-
-        String permission = StringArgumentType.getString(context, "permission");
-        PermissionUser user = Config.get().permissions.users.computeIfAbsent(uuid, key -> new PermissionUser());
-        user.allow.remove(permission);
-        if (user.deny.contains(permission)) {
-            user.deny.remove(permission);
-            CommandManager.respondWithStringSuccess(
-                context,
-                String.format("Undenied %s from %s", permission, profile.name()),
-                false
-            );
-        } else {
-            user.deny.add(permission);
-            CommandManager.respondWithStringSuccess(
-                context,
-                String.format("Denied %s for %s", permission, profile.name()),
-                false
-            );
-        }
-        Config.save();
-        return 1;
-    }
-
-    public static int executePermissionsUserRemove(CommandContext<CommandSourceStack> context) {
-        NameAndId profile;
-        try {
-            Collection<NameAndId> profiles = GameProfileArgument.getGameProfiles(context, "player");
-            if (profiles.size() != 1) {
-                CommandManager.respondWithStringFailure(context, "This argument only supports one player");
-                return 0;
-            }
-            profile = profiles.iterator().next();
-        } catch (CommandSyntaxException e) {
-            CommandManager.respondWithStringFailure(context, e.getMessage());
+        PermissionTeam permissionTeam = Config.get().permissions.get(team.getName());
+        if (permissionTeam == null) {
+            CommandManager.respondWithStringFailure(context, "That team doesnt have any permission overrides");
             return 0;
         }
-        String uuid = profile.id().toString();
-        boolean success = false;
-
-        if (Config.get().permissions.users.containsKey(uuid)) {
-            Config.get().permissions.users.remove(uuid);
-            success = true;
-        }
-
-        Collection<PermissionGroup> groups = Config.get().permissions.groups.values();
-        for (PermissionGroup group : groups) {
-            if (group.uuids.contains(uuid)) {
-                group.uuids.remove(uuid);
-                success = true;
-            }
-        }
-
-        if (!success) {
-            CommandManager.respondWithStringFailure(
-                context,
-                String.format("%s was not found in the permissions config", profile.name())
-            );
-            return 0;
-        }
+        Config.get().permissions.remove(team.getName());
         Config.save();
-        CommandManager.respondWithStringSuccess(
-                context,
-                String.format("%s was removed from the permissions config", profile.name()),
-                true
-        );
+        CommandManager.respondWithStringSuccess(context, String.format("Deleted %s team's permission overrides", team.getName()), false);
         return 1;
     }
 }

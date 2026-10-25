@@ -1,5 +1,7 @@
 package gg.wzrds.tools.commands;
 
+import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.sun.jdi.connect.Connector;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.commands.Commands;
 import com.mojang.brigadier.CommandDispatcher;
@@ -30,7 +32,10 @@ public final class StaffModeCommand {
                     "wzrds.tools.staff-mode",
                     false
                 )
-            ).executes(StaffModeCommand::execute)
+            ).then(Commands
+                .argument("return", BoolArgumentType.bool())
+                .executes(StaffModeCommand::execute)
+            )
         );
     }
 
@@ -69,16 +74,19 @@ public final class StaffModeCommand {
         if (level == null) {
             level = serverPlayer.level();
         }
-        serverPlayer.teleportTo(
-            level,
-            position.x(),
-            position.y(),
-            position.z(),
-            Set.of(),
-            position.yaw(),
-            position.pitch(),
-            false
-        );
+        boolean shouldReturn = BoolArgumentType.getBool(context, "return");
+        if  (shouldReturn) {
+            serverPlayer.teleportTo(
+                level,
+                position.x(),
+                position.y(),
+                position.z(),
+                Set.of(),
+                position.yaw(),
+                position.pitch(),
+                false
+            );
+        }
 
         serverPlayer.setGameMode(GameType.SURVIVAL);
         context.getSource().sendSuccess(() -> Component.literal("Staff Mode has been Disabled"), false);

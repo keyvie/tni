@@ -1,11 +1,18 @@
 package gg.wzrds.tools.commands;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+import gg.wzrds.tools.CustomItems;
+import gg.wzrds.tools.commands.suggestions.CustomItemSuggestionProvider;
 import gg.wzrds.tools.items.Ascendant;
+import gg.wzrds.tools.items.Magnet;
+import gg.wzrds.tools.items.BookOfReach;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.commands.Commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.IdentifierArgument;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Prediction;
@@ -21,7 +28,11 @@ public final class ItemsCommand {
             )
             .then(
                 Commands.literal("spawn")
-                .executes(ItemsCommand::executeSpawn)
+                .then(Commands
+                    .argument("item", IdentifierArgument.id())
+                    .suggests(new CustomItemSuggestionProvider())
+                    .executes(ItemsCommand::executeSpawn)
+                )
             )
         );
     }
@@ -32,9 +43,10 @@ public final class ItemsCommand {
             return 0;
         }
         ServerLevel level = context.getSource().getLevel();
-        ItemStack ascendantBoots = Ascendant.createBoots(level);
-        if (serverPlayer.getInventory().add(ascendantBoots)) {
-            serverPlayer.drop(ascendantBoots, false, Prediction.PREDICTED);
+        Identifier id = IdentifierArgument.getId(context, "item");
+        ItemStack item = CustomItems.create(level, id);
+        if (serverPlayer.getInventory().add(item)) {
+            serverPlayer.drop(item, false, Prediction.PREDICTED);
         }
         return 1;
     }

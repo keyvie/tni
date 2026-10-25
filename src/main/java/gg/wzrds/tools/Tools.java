@@ -4,8 +4,10 @@ import gg.wzrds.tools.commands.CommandManager;
 import gg.wzrds.tools.config.Config;
 import gg.wzrds.tools.enchantments.Excavation;
 import gg.wzrds.tools.enchantments.Swiftness;
+import gg.wzrds.tools.items.Ascendant;
+import gg.wzrds.tools.items.BookOfReach;
+import gg.wzrds.tools.items.Magnet;
 import net.fabricmc.api.ModInitializer;
-
 import net.minecraft.resources.Identifier;
 
 import org.slf4j.Logger;
@@ -29,6 +31,11 @@ public class Tools implements ModInitializer {
 		// Enchantments
 		Excavation.register();
 		Swiftness.register();
+
+		// Items
+		Ascendant.register();
+		BookOfReach.register();
+		Magnet.register();
 	}
 
 	public static Identifier id(String path) {

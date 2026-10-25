@@ -15,19 +15,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-
 
 public class Config {
     private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("tools.yaml");
     private static Config instance = new Config();
 
     public String resource_pack_namespace = "tools";
-    public Permissions permissions = new Permissions();
+    public Map<String, PermissionTeam> permissions = new HashMap<>();
 
     public static Config get() {
         return instance;

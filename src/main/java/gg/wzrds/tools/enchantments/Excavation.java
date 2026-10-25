@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +35,10 @@ public final class Excavation {
         PlayerBlockBreakEvents.AFTER.register(
             (level, player, pos, state, blockEntity) -> {
                 if (!(player instanceof ServerPlayer serverPlayer)) {
+                    return;
+                }
+
+                if (player.isCrouching()) {
                     return;
                 }
 
