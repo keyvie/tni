@@ -21,7 +21,7 @@ import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.item.equipment.Equippable;
 
-public class Ascendant {
+public final class Ascendant {
     public static final Identifier BOOTS_ID = Tools.id("ascendant_boots");
 
     public static ResourceKey<EquipmentAsset> ASCENDANT_BOOTS = ResourceKey.create(

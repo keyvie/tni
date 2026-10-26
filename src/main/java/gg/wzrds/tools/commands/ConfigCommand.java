@@ -13,7 +13,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.TeamArgument;
 import net.minecraft.world.scores.PlayerTeam;
 
-public class ConfigCommand {
+public final class ConfigCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands
             .literal("config")

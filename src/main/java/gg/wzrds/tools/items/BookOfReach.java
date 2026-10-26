@@ -16,7 +16,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-public class BookOfReach {
+public final class BookOfReach {
     public static final Identifier ID = Tools.id("book_of_reach");
 
     public static void register() {
@@ -33,7 +33,7 @@ public class BookOfReach {
         stack.setDamageValue(0);
         stack.setCount(1);
         stack.set(DataComponents.MAX_STACK_SIZE, 1);
-        
+
         stack.set(
             DataComponents.ATTRIBUTE_MODIFIERS,
             ItemAttributeModifiers.builder()

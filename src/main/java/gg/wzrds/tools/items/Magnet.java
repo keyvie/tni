@@ -18,7 +18,7 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
-public class Magnet {
+public final class Magnet {
     public static final Identifier ID = Tools.id("magnet");
 
     public static void register() {

@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class Permissions {
+public final class Permissions {
     public static boolean hasOpLevel(ServerPlayer serverPlayer, PermissionLevel permissionLevel) {
         Permission permission = new Permission.HasCommandLevel(permissionLevel);
         return serverPlayer.permissions().hasPermission(permission);

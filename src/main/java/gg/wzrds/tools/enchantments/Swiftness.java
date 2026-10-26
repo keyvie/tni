@@ -13,7 +13,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-public class Swiftness {
+public final class Swiftness {
     public static final ResourceKey<Enchantment> KEY = ResourceKey.create(
         Registries.ENCHANTMENT,
         Tools.id("swiftness")

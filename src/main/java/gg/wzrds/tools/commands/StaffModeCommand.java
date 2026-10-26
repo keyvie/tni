@@ -1,7 +1,6 @@
 package gg.wzrds.tools.commands;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.sun.jdi.connect.Connector;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.commands.Commands;
 import com.mojang.brigadier.CommandDispatcher;
@@ -32,14 +31,16 @@ public final class StaffModeCommand {
                     "wzrds.tools.staff-mode",
                     false
                 )
-            ).then(Commands
+            )
+            .executes((context) -> execute(context, true))
+            .then(Commands
                 .argument("return", BoolArgumentType.bool())
-                .executes(StaffModeCommand::execute)
+                .executes((context) -> execute(context, BoolArgumentType.getBool(context, "return")))
             )
         );
     }
 
-    public static int execute(CommandContext<CommandSourceStack> context) {
+    public static int execute(CommandContext<CommandSourceStack> context, boolean shouldReturn) {
         ServerPlayer serverPlayer = context.getSource().getPlayer();
         if (serverPlayer == null) {
             return 0;
@@ -74,7 +75,6 @@ public final class StaffModeCommand {
         if (level == null) {
             level = serverPlayer.level();
         }
-        boolean shouldReturn = BoolArgumentType.getBool(context, "return");
         if  (shouldReturn) {
             serverPlayer.teleportTo(
                 level,

@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class CustomItems {
+public final class CustomItems {
     public static final Map<Identifier, Function<ServerLevel, ItemStack>> ITEMS = new HashMap<>();
     public static final String TAG = Tools.id("custom_item").toString();
 
