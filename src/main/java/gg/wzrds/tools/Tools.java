@@ -8,6 +8,7 @@ import gg.wzrds.tools.items.Ascendant;
 import gg.wzrds.tools.items.BookOfReach;
 import gg.wzrds.tools.items.Magnet;
 import gg.wzrds.tools.recipes.BookOfReachRecipe;
+import gg.wzrds.tools.recipes.MagnetRecipe;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.Identifier;
 
@@ -40,6 +41,7 @@ public class Tools implements ModInitializer {
 
 		// Recipes
 		BookOfReachRecipe.register();
+		MagnetRecipe.register();
 	}
 
 	public static Identifier id(String path) {

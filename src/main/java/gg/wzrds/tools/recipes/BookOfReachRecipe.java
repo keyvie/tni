@@ -1,7 +1,6 @@
 package gg.wzrds.tools.recipes;
 
 import com.mojang.serialization.MapCodec;
-import gg.wzrds.tools.Tools;
 import gg.wzrds.tools.items.BookOfReach;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -50,7 +49,6 @@ public class BookOfReachRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingInput input) {
-        Tools.LOGGER.info("Create ITEM");
         return BookOfReach.create(null);
     }
 
