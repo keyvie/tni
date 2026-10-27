@@ -3,7 +3,9 @@
 	"package": "gg.wzrds.tools.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
-		"MobMixin"
+		"IngredientMixin",
+		"MobMixin",
+		"RecipeManagerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

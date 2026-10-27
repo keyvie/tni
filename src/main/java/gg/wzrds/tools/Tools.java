@@ -47,4 +47,5 @@ public class Tools implements ModInitializer {
 	public static Identifier id(String path) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
+	public static boolean owned(Identifier id) { return id.getNamespace().equals(MOD_ID); }
 }
