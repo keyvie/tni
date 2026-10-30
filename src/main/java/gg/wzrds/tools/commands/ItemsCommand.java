@@ -1,11 +1,8 @@
 package gg.wzrds.tools.commands;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
-import gg.wzrds.tools.CustomItems;
 import gg.wzrds.tools.commands.suggestions.CustomItemSuggestionProvider;
-import gg.wzrds.tools.items.Ascendant;
-import gg.wzrds.tools.items.Magnet;
-import gg.wzrds.tools.items.BookOfReach;
+import gg.wzrds.tools.items.CustomItem;
+import gg.wzrds.tools.items.CustomItems;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.commands.Commands;
 import com.mojang.brigadier.CommandDispatcher;
@@ -42,11 +39,15 @@ public final class ItemsCommand {
         if (serverPlayer == null) {
             return 0;
         }
-        ServerLevel level = context.getSource().getLevel();
         Identifier id = IdentifierArgument.getId(context, "item");
-        ItemStack item = CustomItems.create(level, id);
-        if (serverPlayer.getInventory().add(item)) {
-            serverPlayer.drop(item, false, Prediction.PREDICTED);
+        CustomItem item = CustomItems.registry.get(id);
+        if (item == null) {
+            CommandManager.respondWithStringFailure(context, "Couldn't find the item with that ID");
+            return 0;
+        }
+        ItemStack stack = item.createStack();
+        if (!serverPlayer.getInventory().add(stack)) {
+            serverPlayer.drop(stack, false, Prediction.PREDICTED);
         }
         return 1;
     }

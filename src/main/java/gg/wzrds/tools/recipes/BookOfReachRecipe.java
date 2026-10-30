@@ -2,6 +2,7 @@ package gg.wzrds.tools.recipes;
 
 import com.mojang.serialization.MapCodec;
 import gg.wzrds.tools.items.BookOfReach;
+import gg.wzrds.tools.items.CustomItems;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,8 +15,10 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class BookOfReachRecipe extends CustomRecipe {
-    public static final BookOfReachRecipe SELF = new BookOfReachRecipe();
-    public static final RecipeSerializer<BookOfReachRecipe> SERIALIZER = new RecipeSerializer<>(MapCodec.unit(SELF), StreamCodec.unit(SELF));
+    public static final RecipeSerializer<BookOfReachRecipe> SERIALIZER = new RecipeSerializer<>(
+        MapCodec.unit(BookOfReachRecipe::new),
+        StreamCodec.unit(new BookOfReachRecipe())
+    );
 
     public static void register() {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, BookOfReach.ID, SERIALIZER);
@@ -49,7 +52,7 @@ public class BookOfReachRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingInput input) {
-        return BookOfReach.create(null);
+        return CustomItems.BOOK_OF_REACH.createStack();
     }
 
     @Override

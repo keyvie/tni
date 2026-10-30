@@ -1,64 +1,56 @@
 package gg.wzrds.tools.items;
 
-import gg.wzrds.tools.CustomItems;
 import gg.wzrds.tools.Tools;
 import gg.wzrds.tools.config.Config;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
-public final class BookOfReach {
+
+public class BookOfReach extends CustomItem {
     public static final Identifier ID = Tools.id("book_of_reach");
 
-    public static void register() {
-        CustomItems.register(ID, BookOfReach::create);
+    public Identifier id () {
+        return ID;
     }
 
-    public static ItemStack create(ServerLevel level) {
-        ItemStack stack = new ItemStack(Items.HEART_OF_THE_SEA);
+    @Override
+    public Item vanillaItem() {
+        return Items.KNOWLEDGE_BOOK;
+    }
 
-        stack.set(
-            DataComponents.ITEM_NAME,
-            Component.literal("Book of Reach")
+    @Override
+    public String name() {
+        return "Book of Reach";
+    }
+
+    @Override
+    public Identifier itemModel() {
+        return Identifier.fromNamespaceAndPath(
+            Config.get().resource_pack_namespace,
+            "book_of_reach"
         );
-        stack.setDamageValue(0);
-        stack.setCount(1);
-        stack.set(DataComponents.MAX_STACK_SIZE, 1);
+    }
 
+    @Override
+    public void customize(ItemStack stack) {
         stack.set(
             DataComponents.ATTRIBUTE_MODIFIERS,
             ItemAttributeModifiers.builder()
                 .add(Attributes.BLOCK_INTERACTION_RANGE,
                     new AttributeModifier(
                         Tools.id("increased_pickup_range"),
-                        8,
-                        AttributeModifier.Operation.ADD_MULTIPLIED_BASE
+                        2,
+                        AttributeModifier.Operation.ADD_VALUE
                     ),
                     EquipmentSlotGroup.HAND
                 ).build()
         );
-
-        stack.set(
-            DataComponents.ITEM_MODEL,
-            Identifier.fromNamespaceAndPath(
-                Config.get().resource_pack_namespace,
-                "book_of_reach"
-            )
-        );
-
-        CompoundTag tag = new CompoundTag();
-        tag.putBoolean(ID.toString(), true);
-        CustomItems.addTag(tag);
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-        return stack;
     }
 }

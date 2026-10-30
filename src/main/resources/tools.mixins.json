@@ -3,9 +3,10 @@
 	"package": "gg.wzrds.tools.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
-		"IngredientMixin",
+		"KnowledgeBookItemMixin",
 		"MobMixin",
-		"RecipeManagerMixin"
+		"ShapedRecipeMixin",
+		"ShapelessRecipeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
