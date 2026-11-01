@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "tools",
+	"id": "tni",
 	"version": "${version}",
-	"name": "Tools",
-	"description": "wzrds.gg/smp",
+	"name": "Tools and Items",
+	"description": "",
 	"authors": [
 		"keyvie"
 	],
@@ -12,15 +12,15 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/tools/icon.png",
+	"icon": "assets/tni/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"gg.wzrds.tools.Tools"
+			"gg.wzrds.tni.ToolsAndItems"
 		]
 	},
 	"mixins": [
-		"tools.mixins.json"
+		"tni.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",

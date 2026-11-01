@@ -1,0 +1,28 @@
+{
+    "description": "Interaction Reach",
+    "supported_items": "minecraft:warped_fungus_on_a_stick",
+    "weight": 5,
+    "max_level": 1,
+    "min_cost": {
+        "base": 1,
+        "per_level_above_first": 1
+    },
+    "max_cost": {
+        "base": 51,
+        "per_level_above_first": 10
+    },
+    "anvil_cost": 4,
+    "slots": [
+        "hand"
+    ],
+    "effects": {
+        "minecraft:attributes": [
+            {
+                "id": "tni:interaction_reach",
+                "attribute": "minecraft:block_interaction_range",
+                "amount": 2,
+                "operation": "add_value"
+            }
+        ]
+    }
+}

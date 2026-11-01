@@ -1,0 +1,17 @@
+{
+	"required": true,
+	"package": "gg.wzrds.tni.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"mixins": [
+		"KnowledgeBookItemMixin",
+		"MobMixin",
+		"ShapedRecipeMixin",
+		"ShapelessRecipeMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
